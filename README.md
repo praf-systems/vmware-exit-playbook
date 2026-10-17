@@ -40,11 +40,14 @@ pip install -e ".[dev]"
 # Stage 1: turn an RVTools export into inventory.json
 exitplaybook-inventory --input samples/rvtools_vinfo_sample.csv --output runs/inventory.json
 
+# Stage 2: assign a 7R strategy to every VM
+exitplaybook-classify --inventory runs/inventory.json --tags samples/app_tags.csv --output runs/classified.json
+
 # Run the tests
 pytest
 ```
 
-Stage details: [01 Inventory](docs/stages/01-inventory.md).
+Stage details: [01 Inventory](docs/stages/01-inventory.md) · [02 Classify](docs/stages/02-classify.md).
 
 ## Design principles
 

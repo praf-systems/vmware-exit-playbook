@@ -1,0 +1,8 @@
+vm_name,application,environment,criticality,owner,decision,notes
+hc-ehr-app01,Electronic Health Records,prod,tier1,Healthcare IT,,
+hc-ehr-db01,Electronic Health Records,prod,tier1,Healthcare IT,,
+hc-ehr-app01-stg,Electronic Health Records,,tier2,Healthcare IT,,
+edu-lms-web01,Learning Management,prod,tier2,Education IT,,
+edu-lms-web02,Learning Management,prod,tier2,Education IT,,
+fin-erp-app01,ERP,prod,tier1,Finance IT,repurchase,Moving to a SaaS ERP
+corp-ad-dc01,Active Directory,prod,tier1,Infrastructure,retain,Identity stays on-premises until the hybrid identity design is approved
