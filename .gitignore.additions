@@ -1,6 +1,0 @@
-
-# Pipeline output and tool caches
-runs/
-*.egg-info/
-.pytest_cache/
-.ruff_cache/
