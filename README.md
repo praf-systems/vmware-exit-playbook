@@ -28,6 +28,24 @@ flowchart LR
 
 Every stage reads a versioned schema and writes one. Any dataset that matches the input schema runs end to end, so the pipeline does not depend on any one organization's data. See [docs/architecture.md](docs/architecture.md) for the stage contracts.
 
+## Quick start
+
+Requires Python 3.10 or newer.
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e ".[dev]"
+
+# Stage 1: turn an RVTools export into inventory.json
+exitplaybook-inventory --input samples/rvtools_vinfo_sample.csv --output runs/inventory.json
+
+# Run the tests
+pytest
+```
+
+Stage details: [01 Inventory](docs/stages/01-inventory.md).
+
 ## Design principles
 
 - **Schema contracts between stages.** Each handoff is validated; bad input fails early with a clear error.
@@ -39,7 +57,7 @@ Every stage reads a versioned schema and writes one. Any dataset that matches th
 ## Repository layout
 
 ```text
-docs/        architecture, decision framework, ADRs, runbooks, traps
+docs/        architecture, decision framework, stage guides, ADRs, runbooks, traps
 schemas/     JSON Schema for every stage handoff
 src/         one package per pipeline stage
 config/      weights, mappings and thresholds

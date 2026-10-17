@@ -1,0 +1,61 @@
+# Maps each field in the inventory schema to the column names used by
+# different RVTools versions (vInfo sheet). The first match wins.
+# Add aliases here instead of changing code when a new export format appears.
+
+vm_name:
+  required: true
+  aliases: ["VM", "VM Name"]
+
+vm_id:
+  required: false
+  aliases: ["VM UUID", "VM ID", "UUID"]
+
+power_state:
+  required: true
+  aliases: ["Powerstate", "Power State", "PowerState"]
+
+is_template:
+  required: false
+  aliases: ["Template"]
+
+cpus:
+  required: true
+  aliases: ["CPUs", "Num CPU", "vCPU"]
+
+# Size columns: the unit is read from the column name.
+memory:
+  required: true
+  aliases: ["Memory", "Memory MiB", "Memory MB", "Memory GiB", "Memory GB"]
+  default_unit: MiB
+
+provisioned:
+  required: true
+  aliases: ["Provisioned MiB", "Provisioned MB", "Provisioned GiB", "Provisioned GB"]
+
+in_use:
+  required: false
+  aliases: ["In Use MiB", "In Use MB", "In Use GiB", "In Use GB"]
+
+os:
+  required: false
+  aliases:
+    - "OS according to the configuration file"
+    - "OS according to the VMware Tools"
+    - "OS"
+    - "Guest OS"
+
+datacenter:
+  required: false
+  aliases: ["Datacenter", "Data Center"]
+
+cluster:
+  required: false
+  aliases: ["Cluster"]
+
+host:
+  required: false
+  aliases: ["Host", "ESXi Host"]
+
+folder:
+  required: false
+  aliases: ["Folder"]

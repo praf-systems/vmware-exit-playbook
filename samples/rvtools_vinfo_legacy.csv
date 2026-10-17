@@ -1,0 +1,4 @@
+VM,Power State,Template,CPUs,Memory MB,Provisioned MB,In Use MB,OS according to the VMware Tools,Datacenter,Cluster,Host,Folder
+hc-pacs-app01,poweredOn,false,8,32768,1024000,716800,Red Hat Enterprise Linux 7 (64-bit),DC-Primary,HC-Prod-01,esx-p-01.example.local,Healthcare/Prod
+edu-sis-db01,poweredOn,false,8,65536,1536000,921600,Microsoft Windows Server 2016 (64-bit),DC-Primary,EDU-Prod-01,esx-p-03.example.local,Education/Prod
+corp-print01,poweredOff,false,2,4096,61440,20480,Microsoft Windows Server 2012 R2 (64-bit),DC-Secondary,CORP-Infra-02,esx-s-03.example.local,Corporate/Legacy
