@@ -50,7 +50,7 @@ exitplaybook-classify --inventory runs/inventory.json --tags samples/app_tags.cs
 pytest
 ```
 
-Stage details: [01 Inventory](docs/stages/01-inventory.md) · [02 Classify](docs/stages/02-classify.md).
+Stage details: [01 Inventory](docs/stages/01-inventory.md) · [02 Classify](docs/stages/02-classify.md). Getting the data in the first place: [field notes](docs/field-notes/).
 
 ## Design principles
 
@@ -64,9 +64,10 @@ Stage details: [01 Inventory](docs/stages/01-inventory.md) · [02 Classify](docs
 ## Repository layout
 
 ```text
-docs/        architecture, decision framework, stage guides, ADRs, runbooks, traps
+docs/        architecture, decision framework, stage guides, field notes, ADRs, traps
 schemas/     JSON Schema for every stage handoff
 src/         one package per pipeline stage
+scripts/     helpers for collecting data, such as the PowerCLI export
 config/      weights, mappings and thresholds
 samples/     synthetic datasets
 tests/       unit, schema and end-to-end tests
@@ -84,9 +85,22 @@ terraform/   landing zone and per-wave modules
 | v0.4 | Terraform rendering and cutover runbooks | Planned |
 | v1.0 | Full end-to-end run and documentation pack | Planned |
 
-## Background
+## Why this exists
 
-The design generalizes lessons from a multi-year enterprise program that moved 1,500+ VMs from on-premises VMware to VMware Cloud on AWS and then to native AWS, using VMware HCX, AWS Direct Connect and AWS Application Migration Service. Those lessons are captured as rules in [docs/traps.md](docs/traps.md).
+For about a year I've been having versions of the same conversation. Broadcom's licensing changes land on someone's desk, and the question becomes: do we stay on VMware, move to a cloud, or leave for something else?
+
+I've spent most of my career inside VMware environments, and the last few years moving them: HCX service meshes, Direct Connect circuits, AWS MGN cutovers, and a lot of late-night maintenance windows. The answers I kept giving lived in notebooks, whiteboard photos and half-finished scripts. This repository is where I finally wrote them down properly.
+
+So the code here is new, but the opinions aren't. Each rule in the pipeline is something I've either seen work or watched go wrong. The ones that went wrong are in [docs/traps.md](docs/traps.md), and the habits behind the data are in the [field notes](docs/field-notes/).
+
+## Known limitations
+
+This is a reference design, not a product, and it says so where it falls short:
+
+- Only stages 1 and 2 are built so far; the rest of the pipeline is designed but not written yet.
+- The classification rules are deliberately conservative. Without application tags, most VMs come out as rehost.
+- Sizing, cost and dependency mapping are on the roadmap, not in the code.
+- The PowerCLI export script is a starting point; test it against your own vCenter before relying on it.
 
 ## Disclaimer
 

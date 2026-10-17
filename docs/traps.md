@@ -1,6 +1,6 @@
 # Traps and lessons from the field
 
-Each trap below is turned into a rule the pipeline enforces.
+Every one of these has cost someone a weekend. Most of them have cost me one. Each trap below is turned into a rule the pipeline enforces, so the next migration doesn't repeat it.
 
 | Trap | What the pipeline does about it |
 | --- | --- |

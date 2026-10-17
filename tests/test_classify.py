@@ -40,17 +40,17 @@ def vm(result, name):
 # ---------- each rule ----------
 
 def test_owner_decision_wins_over_everything(result):
-    v = vm(result, "fin-erp-app01")
+    v = vm(result, "erp-app01")
     assert (v["strategy"], v["rule"], v["confidence"]) == ("repurchase", "owner-decision", "high")
     assert "SaaS ERP" in v["reasons"][0]
 
 
 def test_owner_can_choose_to_retain(result):
-    assert vm(result, "corp-ad-dc01")["strategy"] == "retain"
+    assert vm(result, "infra-ad01")["strategy"] == "retain"
 
 
 def test_incomplete_data_is_retained_for_review(result):
-    v = vm(result, "corp-old-appliance")
+    v = vm(result, "infra-appliance01")
     assert (v["strategy"], v["rule"], v["needs_review"]) == ("retain", "incomplete-data", True)
 
 
@@ -60,68 +60,68 @@ def test_template_is_retired_and_rebuilt(result):
 
 
 def test_powered_off_and_suspended_are_retire_candidates(result):
-    for name in ("edu-legacy-reports", "fin-erp-dev01"):
+    for name in ("rpt-legacy01", "erp-dev01"):
         v = vm(result, name)
         assert (v["strategy"], v["rule"], v["needs_review"]) == ("retire", "not-running", True)
 
 
 def test_unknown_os_is_retained_for_review(result):
-    v = vm(result, "corp-file01")
+    v = vm(result, "infra-fs01")
     assert (v["strategy"], v["rule"], v["confidence"]) == ("retain", "unknown-os", "low")
 
 
 def test_end_of_life_os_is_replatformed(legacy_inventory_path):
     r = classify(legacy_inventory_path, generated_at=FIXED_TIME)
-    v = vm(r, "hc-pacs-app01")
+    v = vm(r, "img-archive01")
     assert (v["strategy"], v["rule"]) == ("replatform", "end-of-life-os")
     assert "Red Hat Enterprise Linux 7" in v["reasons"][0]
 
 
 def test_database_name_is_replatformed(result):
-    v = vm(result, "hc-ehr-db01")
+    v = vm(result, "pay-db01")
     assert (v["strategy"], v["rule"]) == ("replatform", "database")
 
 
 def test_default_is_rehost(result):
-    v = vm(result, "edu-lms-web01")
+    v = vm(result, "web-portal01")
     assert (v["strategy"], v["rule"], v["confidence"], v["needs_review"]) == \
         ("rehost", "default", "high", False)
 
 
 def test_rule_order_not_running_beats_end_of_life(result):
-    # edu-legacy-reports is powered off AND on Windows Server 2012 R2:
+    # rpt-legacy01 is powered off AND on Windows Server 2012 R2:
     # the earlier rule (not-running) must decide.
-    assert vm(result, "edu-legacy-reports")["rule"] == "not-running"
+    assert vm(result, "rpt-legacy01")["rule"] == "not-running"
 
 
 # ---------- environment and tags ----------
 
 def test_environment_from_tag(result):
-    v = vm(result, "hc-ehr-app01")
+    v = vm(result, "pay-api01")
     assert (v["environment"], v["environment_source"]) == ("prod", "tag")
 
 
 def test_environment_inferred_from_folder(result):
-    v = vm(result, "hc-ehr-app01-stg")
+    v = vm(result, "pay-api01-stg")
     assert (v["environment"], v["environment_source"]) == ("stage", "folder")
 
 
 def test_environment_unknown_when_nothing_matches(result):
-    v = vm(result, "corp-file01")
+    v = vm(result, "infra-fs01")
     assert (v["environment"], v["environment_source"]) == ("unknown", "none")
 
 
 def test_tags_fill_application_owner_and_criticality(result):
-    v = vm(result, "hc-ehr-db01")
-    assert v["application"] == "Electronic Health Records"
+    v = vm(result, "pay-db01")
+    assert v["application"] == "Payments API"
     assert v["criticality"] == "tier1"
-    assert v["owner"] == "Healthcare IT"
+    assert v["owner"] == "Payments Team"
 
 
 def test_runs_without_tags(inventory_path):
     r = classify(inventory_path, generated_at=FIXED_TIME)
     assert r["inputs"]["tags"] is None
-    assert vm(r, "fin-erp-app01")["strategy"] == "rehost"
+    assert vm(r, "erp-app01")["strategy"] == "rehost"
     validate_classified(r)
 
 
