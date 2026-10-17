@@ -1,0 +1,32 @@
+# Parameters for stage 2 (classify). The rule order is fixed in code and
+# documented in docs/stages/02-classify.md; the values below are tunable.
+
+# Operating systems treated as end of life. Matched as case-insensitive
+# substrings of the inventory OS name. Review against vendor lifecycle pages.
+end_of_life_os:
+  - "Windows Server 2003"
+  - "Windows Server 2008"
+  - "Windows Server 2012"
+  - "Red Hat Enterprise Linux 5"
+  - "Red Hat Enterprise Linux 6"
+  - "Red Hat Enterprise Linux 7"
+  - "CentOS"
+  - "SUSE Linux Enterprise 11"
+  - "SUSE Linux Enterprise 12"
+
+# VM names that suggest a database server (regular expressions, case-insensitive).
+# Matching VMs are proposed for replatforming onto a managed database.
+database_name_patterns:
+  - "(^|[-_])db\\d*($|[-_])"
+  - "sql"
+  - "ora(cle)?\\d*($|[-_])"
+  - "pg\\d*($|[-_])"
+
+# How to infer the environment when no tag provides it. Folder is checked
+# first, then the VM name. Regular expressions, case-insensitive.
+environment_patterns:
+  prod:  ["(^|[/_-])prod(uction)?($|[/_-])", "(^|[/_-])prd($|[/_-])"]
+  stage: ["(^|[/_-])stag(e|ing)($|[/_-])", "(^|[/_-])stg($|[/_-])", "(^|[/_-])uat($|[/_-])"]
+  dev:   ["(^|[/_-])dev(elopment)?($|[/_-])"]
+  test:  ["(^|[/_-])test($|[/_-])", "(^|[/_-])qa($|[/_-])"]
+  dr:    ["(^|[/_-])dr($|[/_-])"]

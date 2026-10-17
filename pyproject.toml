@@ -21,6 +21,7 @@ dev = ["pytest>=8.0", "ruff>=0.5"]
 
 [project.scripts]
 exitplaybook-inventory = "exitplaybook.inventory.cli:main"
+exitplaybook-classify = "exitplaybook.classify.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/praf-systems/vmware-exit-playbook/schemas/classified.schema.json",
+  "title": "Classified inventory",
+  "description": "7R strategy per VM, produced by stage 2 and consumed by stage 3.",
+  "type": "object",
+  "required": ["schema_version", "generated_at", "inputs", "summary", "vms"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "inputs": {
+      "type": "object",
+      "required": ["inventory", "tags"],
+      "additionalProperties": false,
+      "properties": {
+        "inventory": { "type": "string" },
+        "tags": { "type": ["string", "null"] }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["total_vms", "by_strategy", "needs_review"],
+      "additionalProperties": false,
+      "properties": {
+        "total_vms": { "type": "integer", "minimum": 0 },
+        "by_strategy": {
+          "type": "object",
+          "propertyNames": { "$ref": "#/$defs/strategy" },
+          "additionalProperties": { "type": "integer", "minimum": 0 }
+        },
+        "needs_review": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "vms": { "type": "array", "items": { "$ref": "#/$defs/vm" } }
+  },
+  "$defs": {
+    "strategy": {
+      "enum": ["retire", "retain", "rehost", "relocate", "replatform", "repurchase", "refactor"]
+    },
+    "vm": {
+      "type": "object",
+      "required": ["vm_id", "vm_name", "application", "environment", "environment_source",
+                   "criticality", "owner", "strategy", "rule", "reasons", "confidence",
+                   "needs_review"],
+      "additionalProperties": false,
+      "properties": {
+        "vm_id": { "type": "string", "minLength": 1 },
+        "vm_name": { "type": "string", "minLength": 1 },
+        "application": { "type": ["string", "null"] },
+        "environment": { "enum": ["prod", "stage", "dev", "test", "dr", "unknown"] },
+        "environment_source": { "enum": ["tag", "folder", "name", "none"] },
+        "criticality": { "enum": ["tier1", "tier2", "tier3", "unknown"] },
+        "owner": { "type": ["string", "null"] },
+        "strategy": { "$ref": "#/$defs/strategy" },
+        "rule": { "type": "string", "minLength": 1 },
+        "reasons": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "confidence": { "enum": ["high", "medium", "low"] },
+        "needs_review": { "type": "boolean" }
+      }
+    }
+  }
+}
