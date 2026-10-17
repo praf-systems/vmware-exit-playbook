@@ -1,5 +1,8 @@
 # VMware Exit Playbook
 
+[![CI](https://github.com/praf-systems/vmware-exit-playbook/actions/workflows/ci.yml/badge.svg)](https://github.com/praf-systems/vmware-exit-playbook/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 **Stay, move or leave VMware: a schema-driven reference pipeline for planning and executing the decision.**
 
 Broadcom's VMware licensing changes have pushed many organizations to re-examine their virtualization strategy. This repository treats that as an architecture decision, not an anti-VMware statement. It provides a pipeline that takes an inventory of a VMware estate and produces a recommendation, a sizing, a wave plan, translated security rules, infrastructure as code and cutover runbooks.
@@ -55,6 +58,7 @@ Stage details: [01 Inventory](docs/stages/01-inventory.md) · [02 Classify](docs
 - **Configuration over code.** Decision weights, column mappings and thresholds live in `config/`.
 - **Explainable output.** Every recommendation carries the criteria that drove it.
 - **Synthetic data only.** Sample datasets are invented; no real customer data is included.
+- **Every change is tested.** CI runs lint, unit and schema tests and an end-to-end run on Python 3.10 to 3.13.
 - **Build vs buy is explicit.** Each stage documents which commercial or open-source tools already cover it. See [docs/build-vs-buy.md](docs/build-vs-buy.md).
 
 ## Repository layout
@@ -67,6 +71,7 @@ config/      weights, mappings and thresholds
 samples/     synthetic datasets
 tests/       unit, schema and end-to-end tests
 terraform/   landing zone and per-wave modules
+.github/     CI workflow, Dependabot and pull request template
 ```
 
 ## Roadmap
