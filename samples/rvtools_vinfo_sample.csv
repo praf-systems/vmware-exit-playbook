@@ -1,13 +1,13 @@
 VM,Powerstate,Template,CPUs,Memory,Provisioned MiB,In Use MiB,OS according to the configuration file,Datacenter,Cluster,Host,Folder,VM UUID
-hc-ehr-app01,poweredOn,False,8,32768,409600,215040,Red Hat Enterprise Linux 8 (64-bit),DC-Primary,HC-Prod-01,esx-p-01.example.local,Healthcare/Prod,4210a1b2-0001-4c3d-8e9f-000000000001
-hc-ehr-db01,poweredOn,False,16,131072,2097152,1468006,Microsoft Windows Server 2019 (64-bit),DC-Primary,HC-Prod-01,esx-p-02.example.local,Healthcare/Prod,4210a1b2-0002-4c3d-8e9f-000000000002
-hc-ehr-app01-stg,poweredOn,False,4,16384,204800,102400,Red Hat Enterprise Linux 8 (64-bit),DC-Primary,HC-NonProd-01,esx-p-05.example.local,Healthcare/Stage,4210a1b2-0003-4c3d-8e9f-000000000003
-edu-lms-web01,poweredOn,False,4,8192,102400,40960,Ubuntu Linux (64-bit),DC-Primary,EDU-Prod-01,esx-p-03.example.local,Education/Prod,4210a1b2-0004-4c3d-8e9f-000000000004
-edu-lms-web02,poweredOn,False,4,8192,102400,40960,Ubuntu Linux (64-bit),DC-Primary,EDU-Prod-01,esx-p-04.example.local,Education/Prod,4210a1b2-0005-4c3d-8e9f-000000000005
-edu-legacy-reports,poweredOff,False,2,4096,81920,61440,Microsoft Windows Server 2012 R2 (64-bit),DC-Secondary,EDU-Prod-02,esx-s-01.example.local,Education/Legacy,4210a1b2-0006-4c3d-8e9f-000000000006
-fin-erp-app01,poweredOn,False,8,65536,512000,307200,SUSE Linux Enterprise 15 (64-bit),DC-Primary,FIN-Prod-01,esx-p-06.example.local,Finance/Prod,4210a1b2-0007-4c3d-8e9f-000000000007
-fin-erp-dev01,suspended,False,4,16384,204800,51200,SUSE Linux Enterprise 15 (64-bit),DC-Secondary,FIN-Dev-01,esx-s-02.example.local,Finance/Dev,4210a1b2-0008-4c3d-8e9f-000000000008
-corp-ad-dc01,poweredOn,False,2,8192,81920,40960,Microsoft Windows Server 2022 (64-bit),DC-Primary,CORP-Infra-01,esx-p-07.example.local,Corporate/Infra,4210a1b2-0009-4c3d-8e9f-000000000009
-corp-file01,poweredOn,False,4,16384,"1,048,576",838861,,DC-Primary,CORP-Infra-01,esx-p-07.example.local,Corporate/Infra,4210a1b2-0010-4c3d-8e9f-000000000010
-tpl-rhel8-golden,poweredOff,True,2,4096,40960,8192,Red Hat Enterprise Linux 8 (64-bit),DC-Primary,CORP-Infra-01,esx-p-08.example.local,Templates,4210a1b2-0011-4c3d-8e9f-000000000011
-corp-old-appliance,poweredOff,False,1,2048,0,0,Other Linux (64-bit),DC-Secondary,CORP-Infra-02,esx-s-03.example.local,Corporate/Retired,4210a1b2-0012-4c3d-8e9f-000000000012
+pay-api01,poweredOn,False,8,32768,409600,215040,Red Hat Enterprise Linux 8 (64-bit),DC-Primary,Prod-Cluster-01,esx-p-01.example.local,Payments/Prod,4210a1b2-0001-4c3d-8e9f-000000000001
+pay-db01,poweredOn,False,16,131072,2097152,1468006,Microsoft Windows Server 2019 (64-bit),DC-Primary,Prod-Cluster-01,esx-p-02.example.local,Payments/Prod,4210a1b2-0002-4c3d-8e9f-000000000002
+pay-api01-stg,poweredOn,False,4,16384,204800,102400,Red Hat Enterprise Linux 8 (64-bit),DC-Primary,NonProd-Cluster-01,esx-p-05.example.local,Payments/Stage,4210a1b2-0003-4c3d-8e9f-000000000003
+web-portal01,poweredOn,False,4,8192,102400,40960,Ubuntu Linux (64-bit),DC-Primary,Prod-Cluster-02,esx-p-03.example.local,Web/Prod,4210a1b2-0004-4c3d-8e9f-000000000004
+web-portal02,poweredOn,False,4,8192,102400,40960,Ubuntu Linux (64-bit),DC-Primary,Prod-Cluster-02,esx-p-04.example.local,Web/Prod,4210a1b2-0005-4c3d-8e9f-000000000005
+rpt-legacy01,poweredOff,False,2,4096,81920,61440,Microsoft Windows Server 2012 R2 (64-bit),DC-Secondary,Prod-Cluster-03,esx-s-01.example.local,Reporting/Legacy,4210a1b2-0006-4c3d-8e9f-000000000006
+erp-app01,poweredOn,False,8,65536,512000,307200,SUSE Linux Enterprise 15 (64-bit),DC-Primary,Prod-Cluster-04,esx-p-06.example.local,ERP/Prod,4210a1b2-0007-4c3d-8e9f-000000000007
+erp-dev01,suspended,False,4,16384,204800,51200,SUSE Linux Enterprise 15 (64-bit),DC-Secondary,NonProd-Cluster-02,esx-s-02.example.local,ERP/Dev,4210a1b2-0008-4c3d-8e9f-000000000008
+infra-ad01,poweredOn,False,2,8192,81920,40960,Microsoft Windows Server 2022 (64-bit),DC-Primary,Infra-Cluster-01,esx-p-07.example.local,Infra/Core,4210a1b2-0009-4c3d-8e9f-000000000009
+infra-fs01,poweredOn,False,4,16384,"1,048,576",838861,,DC-Primary,Infra-Cluster-01,esx-p-07.example.local,Infra/Core,4210a1b2-0010-4c3d-8e9f-000000000010
+tpl-rhel8-golden,poweredOff,True,2,4096,40960,8192,Red Hat Enterprise Linux 8 (64-bit),DC-Primary,Infra-Cluster-01,esx-p-08.example.local,Templates,4210a1b2-0011-4c3d-8e9f-000000000011
+infra-appliance01,poweredOff,False,1,2048,0,0,Other Linux (64-bit),DC-Secondary,Infra-Cluster-02,esx-s-03.example.local,Infra/Retired,4210a1b2-0012-4c3d-8e9f-000000000012

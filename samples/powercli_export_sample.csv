@@ -1,0 +1,4 @@
+"VM","Powerstate","Template","CPUs","Memory MB","Provisioned GB","In Use GB","OS according to the configuration file","Datacenter","Cluster","Host","Folder","VM UUID"
+"app-batch01","PoweredOn","False","4","16384","200","96.5","Red Hat Enterprise Linux 9 (64-bit)","DC-Primary","Prod-Cluster-01","esx-p-01.example.local","Batch","5012c3d4-0001-4e5f-9a0b-000000000101"
+"app-batch02","PoweredOff","False","4","16384","200","40","Red Hat Enterprise Linux 9 (64-bit)","DC-Primary","Prod-Cluster-01","esx-p-02.example.local","Batch","5012c3d4-0002-4e5f-9a0b-000000000102"
+"tpl-win2022-golden","poweredOff","True","2","8192","60","22.75","Microsoft Windows Server 2022 (64-bit)","","","esx-p-08.example.local","","5012c3d4-0003-4e5f-9a0b-000000000103"

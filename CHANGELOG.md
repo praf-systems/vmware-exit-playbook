@@ -4,6 +4,19 @@ All notable changes are recorded here. The format follows [Keep a Changelog](htt
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-10-17
+
+### Added
+
+- Field notes: how to get a trustworthy inventory with RVTools or PowerCLI, and what to avoid.
+- `scripts/export-inventory.ps1`: PowerCLI export in a format stage 1 already understands, with a sample and a test.
+- Known limitations section in the README.
+
+### Changed
+
+- Sample data now uses neutral, made-up application names.
+- README background rewritten as the story behind the project.
+
 ## [0.1.0] - 2026-10-17
 
 ### Added
