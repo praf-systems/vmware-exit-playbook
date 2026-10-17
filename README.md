@@ -78,7 +78,7 @@ terraform/   landing zone and per-wave modules
 
 | Release | Scope | Status |
 | --- | --- | --- |
-| v0.1 | Inventory and classify, schemas, synthetic data, CI | In progress |
+| v0.1 | Inventory and classify, schemas, synthetic data, CI | Released |
 | v0.2 | Decision scoring and sizing | Planned |
 | v0.3 | Wave planning and security translation | Planned |
 | v0.4 | Terraform rendering and cutover runbooks | Planned |
