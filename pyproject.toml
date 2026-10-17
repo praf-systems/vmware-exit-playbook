@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "exitplaybook"
+version = "0.1.0"
+description = "Stay, move or leave VMware: a schema-driven reference pipeline"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Prafulla Marmat" }]
+requires-python = ">=3.10"
+dependencies = [
+  "jsonschema>=4.18",
+  "PyYAML>=6.0",
+  "openpyxl>=3.1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "ruff>=0.5"]
+
+[project.scripts]
+exitplaybook-inventory = "exitplaybook.inventory.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B"]

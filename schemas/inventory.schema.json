@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/praf-systems/vmware-exit-playbook/schemas/inventory.schema.json",
+  "title": "Inventory",
+  "description": "Normalized VM inventory produced by stage 1 and consumed by stages 2 and 4.",
+  "type": "object",
+  "required": ["schema_version", "generated_at", "source", "summary", "vms"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "source": {
+      "type": "object",
+      "required": ["file", "format", "column_map"],
+      "additionalProperties": false,
+      "properties": {
+        "file": { "type": "string" },
+        "format": { "enum": ["csv", "xlsx"] },
+        "column_map": {
+          "type": "object",
+          "description": "Which source column was used for each schema field.",
+          "additionalProperties": { "type": "string" }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["total_vms", "powered_on", "powered_off", "templates", "flagged",
+                   "total_vcpus", "total_memory_gib", "total_provisioned_gib"],
+      "additionalProperties": false,
+      "properties": {
+        "total_vms": { "type": "integer", "minimum": 0 },
+        "powered_on": { "type": "integer", "minimum": 0 },
+        "powered_off": { "type": "integer", "minimum": 0 },
+        "templates": { "type": "integer", "minimum": 0 },
+        "flagged": { "type": "integer", "minimum": 0 },
+        "total_vcpus": { "type": "integer", "minimum": 0 },
+        "total_memory_gib": { "type": "number", "minimum": 0 },
+        "total_provisioned_gib": { "type": "number", "minimum": 0 }
+      }
+    },
+    "vms": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/vm" }
+    }
+  },
+  "$defs": {
+    "vm": {
+      "type": "object",
+      "required": ["vm_id", "vm_name", "power_state", "is_template", "cpus",
+                   "memory_gib", "provisioned_gib", "in_use_gib", "os",
+                   "datacenter", "cluster", "host", "folder", "flags", "source_row"],
+      "additionalProperties": false,
+      "properties": {
+        "vm_id": { "type": "string", "minLength": 1 },
+        "vm_name": { "type": "string", "minLength": 1 },
+        "power_state": { "enum": ["poweredOn", "poweredOff", "suspended", "unknown"] },
+        "is_template": { "type": "boolean" },
+        "cpus": { "type": "integer", "minimum": 0 },
+        "memory_gib": { "type": "number", "minimum": 0 },
+        "provisioned_gib": { "type": "number", "minimum": 0 },
+        "in_use_gib": { "type": ["number", "null"], "minimum": 0 },
+        "os": { "type": ["string", "null"] },
+        "datacenter": { "type": ["string", "null"] },
+        "cluster": { "type": ["string", "null"] },
+        "host": { "type": ["string", "null"] },
+        "folder": { "type": ["string", "null"] },
+        "flags": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "enum": ["template", "powered_off", "suspended", "missing_os",
+                              "zero_disk", "zero_cpu", "generated_id"] }
+        },
+        "source_row": { "type": "integer", "minimum": 2,
+                        "description": "Row number in the source file, for traceability." }
+      }
+    }
+  }
+}
