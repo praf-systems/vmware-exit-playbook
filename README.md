@@ -9,9 +9,9 @@ Broadcom's VMware licensing changes have pushed many organizations to re-examine
 
 | Path | What it means | Typical targets |
 | --- | --- | --- |
-| **Stay** | Keep VMware, change where it runs | Amazon EVS, VMware Cloud on AWS |
-| **Move** | Rehost or replatform onto native cloud | Amazon EC2, Microsoft Azure |
-| **Leave** | Move onto an open-source hypervisor | KVM, Apache CloudStack, OpenStack |
+| **Stay** | Keep VMware, change where it runs | VCF on-premises, Amazon EVS, VMware Cloud on AWS, Oracle Cloud VMware Solution |
+| **Move** | Rehost or replatform onto native cloud | Oracle Cloud Infrastructure, Amazon EC2, Microsoft Azure |
+| **Leave** | Keep your own data center, on open-source virtualization | OpenShift Virtualization, KVM, Proxmox VE, OpenStack, Apache CloudStack |
 
 An exit is not always the right answer. The pipeline explains every recommendation, including when staying is the better choice.
 
@@ -52,7 +52,7 @@ exitplaybook-classify --inventory runs/inventory.json --tags samples/app_tags.cs
 pytest
 ```
 
-Stage details: [01 Inventory](docs/stages/01-inventory.md) · [02 Classify](docs/stages/02-classify.md). Getting the data in the first place: [field notes](docs/field-notes/).
+Stage details: [01 Inventory](docs/stages/01-inventory.md) · [02 Classify](docs/stages/02-classify.md). Getting the data in the first place: [field notes](docs/field-notes/). Where workloads land: [destination guides](docs/destinations/).
 
 ## Design principles
 
@@ -66,7 +66,7 @@ Stage details: [01 Inventory](docs/stages/01-inventory.md) · [02 Classify](docs
 ## Repository layout
 
 ```text
-docs/        architecture, decision framework, stage guides, field notes, ADRs, traps
+docs/        architecture, decision framework, stage guides, destination guides, field notes, ADRs, traps
 schemas/     JSON Schema for every stage handoff
 src/         one package per pipeline stage
 scripts/     helpers for collecting data, such as the PowerCLI export
@@ -87,6 +87,14 @@ terraform/   landing zone and per-wave modules
 | v0.4 | Terraform rendering and cutover runbooks | Planned |
 | v1.0 | Full end-to-end run and documentation pack | Planned |
 
+Alongside the code releases, a documentation track covers where workloads land:
+
+| Track | Scope | Status |
+| --- | --- | --- |
+| Destination guides | OpenShift Virtualization first, then Oracle Cloud Infrastructure; a thin shared-principles skeleton for AWS, Azure and GCP later | In progress |
+| Disaster recovery | A DR design for each destination | Planned |
+| AI-ready destinations | GPU options, AI platforms and data sovereignty for each destination | Planned |
+
 ## Why this exists
 
 For about a year I've been having versions of the same conversation. Broadcom's licensing changes land on someone's desk, and the question becomes: do we stay on VMware, move to a cloud, or leave for something else?
@@ -102,6 +110,7 @@ This is a reference design, not a product, and it says so where it falls short:
 - Only stages 1 and 2 are built so far; the rest of the pipeline is designed but not written yet. The readiness checks (DRS rules, firewall rules, backup status) are planned for v0.3; snapshots and mounted media are already flagged in stage 1.
 - The classification rules are deliberately conservative. Without application tags, most VMs come out as rehost.
 - Sizing, cost and dependency mapping are on the roadmap, not in the code.
+- The destination guides are built from lab sessions, not production migrations, and each one says how it was tested.
 - The PowerCLI export script is a starting point; test it against your own vCenter before relying on it.
 - The pipeline assumes VLAN-backed networks on distributed switches. VMs on NSX overlay networks, and NSX Edge services such as load balancing, NAT and VPN, need extra planning that isn't covered yet.
 

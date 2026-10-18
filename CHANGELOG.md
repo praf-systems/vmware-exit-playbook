@@ -4,6 +4,19 @@ All notable changes are recorded here. The format follows [Keep a Changelog](htt
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-10-18
+
+### Added
+
+- Destination guides page: the plan, the 14-point template every guide follows, honesty labels and a cross-platform concept map.
+- Roadmap tracks for destination guides, disaster recovery and AI-ready destinations.
+
+### Changed
+
+- The stay, move and leave destinations now include OpenShift Virtualization, Proxmox VE, Oracle Cloud Infrastructure, Oracle Cloud VMware Solution and VCF on-premises.
+- The decision framework compares six paths, adds how each platform is paid for, and states that staying can be the right answer.
+- Build vs buy lists Oracle Cloud Migrations and the Migration Toolkit for Virtualization.
+
 ## [0.1.2] - 2026-10-17
 
 ### Added

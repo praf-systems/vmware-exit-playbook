@@ -2,14 +2,17 @@
 
 Stage 3 scores each workload against the available paths. The weights live in `config/` so each organization can tune them. The ratings below are starting assumptions to refine, not findings.
 
-| Criterion | Stay: EVS / VMC | Move: EC2 via MGN | Move: Azure | Leave: KVM / CloudStack |
-| --- | --- | --- | --- | --- |
-| Change to operations and skills | Low | Medium | Medium | High |
-| Migration effort and risk | Low | Medium | Medium | High |
-| Exposure to VMware licensing | Retained | Removed | Removed | Removed |
-| Tooling maturity for the move | High (HCX) | High (MGN) | High (Azure Migrate) | Lower (virt-v2v, scripts) |
-| Modernization path | Limited | Strong | Strong | Limited |
-| Data residency and sovereignty control | Region-bound | Region-bound | Region-bound | Full, if self-hosted |
+| Criterion | Stay: VCF / EVS / VMC / OCVS | Move: OCI | Move: EC2 via MGN | Move: Azure | Leave: OpenShift Virtualization | Leave: KVM / Proxmox / OpenStack |
+| --- | --- | --- | --- | --- | --- | --- |
+| Change to operations and skills | Low | Medium | Medium | Medium | Medium to high (Kubernetes skills) | High |
+| Migration effort and risk | Low | Medium | Medium | Medium | Medium | High |
+| Exposure to VMware licensing | Retained | Removed | Removed | Removed | Removed | Removed |
+| How the platform is paid for | VMware subscription | Pay per use | Pay per use | Pay per use | Red Hat subscription | Free software; support optional |
+| Tooling maturity for the move | High (HCX) | Medium (Oracle's migration service; check current scope) | High (MGN) | High (Azure Migrate) | Medium to high (Migration Toolkit for Virtualization) | Lower (virt-v2v, scripts) |
+| Modernization path | Limited | Strong | Strong | Strong | Strong (VMs and containers on one platform) | Limited |
+| Data residency and sovereignty control | Depends on where it runs | Region-bound | Region-bound | Region-bound | Full, if self-hosted | Full, if self-hosted |
+
+Staying is a legitimate answer. It can be the safest short-term choice, for example while a contract runs out or when there isn't time to migrate safely. The framework shows the cost of each path openly rather than ruling any of them out.
 
 ## How the score is used
 
