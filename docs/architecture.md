@@ -16,7 +16,7 @@ See [ADR 0001](adr/0001-schema-driven-stages.md) for the decision record.
 | --- | --- | --- | --- | --- | --- |
 | 1 | Inventory | RVTools export (vInfo, plus vSnapshot and vCD when available) or vCenter API | Map version-specific columns to one schema; normalize units; flag templates and powered-off VMs | `inventory.json` | Classify, Sizing |
 | 2 | Classify | `inventory.json` + owner and criticality tags | Assign a 7R strategy per VM | `classified.json` | Target mapping |
-| 3 | Target mapping | `classified.json` + decision weights | Score each workload against stay, move and leave targets | `targets.json` | Sizing, Wave planning |
+| 3 | Target mapping | `classified.json` + decision weights | Score each workload against stay, move and leave targets (see the [destination guides](destinations/)) | `targets.json` | Sizing, Wave planning |
 | 4 | Sizing | `targets.json` | VM specs to EC2 instance types, or host counts for VMC, EVS or KVM | `sizing.json` + cost estimate | IaC |
 | 5 | Readiness and wave planning | `targets.json` + dependencies, environments and readiness checks | Check each VM is ready to move (snapshots, mounted media, DRS rules, firewall rules, backups); then group by application and environment, non-production first, heavy VMs in their own slots, within maintenance windows | `waves.json` | Security, Cutover |
 | 6 | Security translation | NSX DFW export + migration list | Resolve rule sources, destinations and services to target hosts | `sg_rules.csv` | IaC |
