@@ -21,6 +21,7 @@ from jsonschema import Draft202012Validator
 from exitplaybook.paths import CONFIG_DIR, SCHEMAS_DIR
 
 DEFAULT_COLUMNS = CONFIG_DIR / "rvtools_columns.yaml"
+DEFAULT_EXTRA_SHEETS = CONFIG_DIR / "rvtools_extra_sheets.yaml"
 DEFAULT_SCHEMA = SCHEMAS_DIR / "inventory.schema.json"
 
 # Size units: factor that converts a value in that unit to GiB.
@@ -42,8 +43,11 @@ class InventoryError(ValueError):
 
 # ---------- reading ----------
 
-def read_table(path: Path) -> tuple[str, list[str], list[dict[str, Any]]]:
-    """Return (format, header, rows) for a CSV or XLSX file."""
+def read_table(path: Path, sheet: str = "vInfo") -> tuple[str, list[str], list[dict[str, Any]]]:
+    """Return (format, header, rows) for a CSV file or one sheet of an XLSX file.
+
+    For XLSX, the named sheet is used if present; for vInfo, the first sheet is the fallback.
+    """
     suffix = path.suffix.lower()
     if suffix == ".csv":
         with path.open(newline="", encoding="utf-8-sig") as f:
@@ -54,7 +58,12 @@ def read_table(path: Path) -> tuple[str, list[str], list[dict[str, Any]]]:
         from openpyxl import load_workbook
 
         wb = load_workbook(path, read_only=True, data_only=True)
-        ws = wb["vInfo"] if "vInfo" in wb.sheetnames else wb.active
+        if sheet in wb.sheetnames:
+            ws = wb[sheet]
+        elif sheet == "vInfo":
+            ws = wb.active
+        else:
+            return "xlsx", [], []
         it = ws.iter_rows(values_only=True)
         header = [str(c).strip() if c is not None else "" for c in next(it, [])]
         rows = [dict(zip(header, r, strict=False)) for r in it if any(v is not None for v in r)]
@@ -125,14 +134,69 @@ def _generated_id(name: str, datacenter: str | None, cluster: str | None) -> str
     return f"gen-{digest}"
 
 
+# ---------- extra sheets (snapshots, mounted media) ----------
+
+def _first_column(header: list[str], aliases: list[str]) -> str | None:
+    available = {_key(h): h for h in header if h}
+    return next((available[_key(a)] for a in aliases if _key(a) in available), None)
+
+
+def read_extra_sheet(
+    path: Path | None, sheet: str, spec: dict[str, list[str]]
+) -> tuple[list[dict[str, Any]], int]:
+    """Read one extra RVTools sheet into simple records: vm_name, vm_id and the sheet's fields.
+
+    Returns (records, row_count). A missing file or sheet gives no records.
+    """
+    if path is None:
+        return [], 0
+    _, header, rows = read_table(Path(path), sheet)
+    if not rows:
+        return [], 0
+    cols = {field: _first_column(header, aliases) for field, aliases in spec.items()}
+    if cols.get("vm_name") is None:
+        raise InventoryError(f"{sheet}: no VM name column (tried: {', '.join(spec['vm_name'])}).")
+    records = []
+    for row in rows:
+        name = _text(row.get(cols["vm_name"]))
+        if name is None:
+            continue
+        rec = {field: _text(row.get(col)) if col else None for field, col in cols.items()}
+        rec["vm_name"] = name
+        records.append(rec)
+    return records, len(records)
+
+
+def _index_by_vm(records: list[dict[str, Any]], keep) -> tuple[set[str], set[str]]:
+    """Return the VM ids and names for which at least one record passes `keep`."""
+    ids, names = set(), set()
+    for rec in records:
+        if keep(rec):
+            if rec.get("vm_id"):
+                ids.add(rec["vm_id"])
+            names.add(rec["vm_name"])
+    return ids, names
+
+
+def _matches(vm_id: str, vm_name: str, ids: set[str], names: set[str], use_ids: bool) -> bool:
+    return vm_id in ids if use_ids else vm_name in names
+
+
 # ---------- building ----------
 
 def build_inventory(
     source: Path,
     columns_path: Path = DEFAULT_COLUMNS,
     generated_at: datetime | None = None,
+    snapshots: Path | None = None,
+    cd: Path | None = None,
+    extra_sheets_path: Path = DEFAULT_EXTRA_SHEETS,
 ) -> dict[str, Any]:
-    """Turn an RVTools export into an inventory dictionary (not yet validated)."""
+    """Turn an RVTools export into an inventory dictionary (not yet validated).
+
+    For an .xlsx export, the vSnapshot and vCD sheets are read automatically unless
+    separate files are given. For CSV exports, pass those sheets as `snapshots` and `cd`.
+    """
     source = Path(source)
     fmt, header, rows = read_table(source)
     config = load_column_config(columns_path)
@@ -141,6 +205,17 @@ def build_inventory(
         f: unit_factor(column_map[f], config[f].get("default_unit"))
         for f in SIZE_FIELDS if f in column_map
     }
+
+    with Path(extra_sheets_path).open(encoding="utf-8") as f:
+        extra_spec = yaml.safe_load(f)
+    snap_src = snapshots if snapshots is not None else (source if fmt == "xlsx" else None)
+    cd_src = cd if cd is not None else (source if fmt == "xlsx" else None)
+    snap_records, snap_rows = read_extra_sheet(snap_src, "vSnapshot", extra_spec["vSnapshot"])
+    cd_records, cd_rows = read_extra_sheet(cd_src, "vCD", extra_spec["vCD"])
+    snap_ids, snap_names = _index_by_vm(snap_records, lambda r: True)
+    cd_ids, cd_names = _index_by_vm(
+        cd_records, lambda r: (r.get("connected") or "").lower() in TRUE_VALUES
+    )
 
     def get(row: dict[str, Any], field: str) -> Any:
         col = column_map.get(field)
@@ -189,6 +264,12 @@ def build_inventory(
             flags.append("zero_disk")
         if cpus == 0:
             flags.append("zero_cpu")
+        # Match extra sheets by UUID when the VM has a real one, otherwise by name.
+        use_ids = "generated_id" not in flags
+        if _matches(vm_id, name, snap_ids, snap_names, use_ids and bool(snap_ids)):
+            flags.append("snapshot")
+        if _matches(vm_id, name, cd_ids, cd_names, use_ids and bool(cd_ids)):
+            flags.append("connected_media")
 
         vms.append({
             "vm_id": vm_id,
@@ -208,11 +289,27 @@ def build_inventory(
             "source_row": row_no,
         })
 
+    def matched(records: list[dict[str, Any]]) -> int:
+        ids = {v["vm_id"] for v in vms}
+        names = {v["vm_name"] for v in vms}
+        return sum(1 for r in records if r.get("vm_id") in ids or r["vm_name"] in names)
+
+    extra_sheets = {}
+    if snap_src is not None:
+        extra_sheets["vSnapshot"] = {"rows": snap_rows, "matched": matched(snap_records)}
+    if cd_src is not None:
+        extra_sheets["vCD"] = {"rows": cd_rows, "matched": matched(cd_records)}
+
     when = (generated_at or datetime.now(timezone.utc)).replace(microsecond=0)
     return {
-        "schema_version": "1.0",
+        "schema_version": "1.1",
         "generated_at": when.isoformat().replace("+00:00", "Z"),
-        "source": {"file": source.name, "format": fmt, "column_map": column_map},
+        "source": {
+            "file": source.name,
+            "format": fmt,
+            "column_map": column_map,
+            "extra_sheets": extra_sheets,
+        },
         "summary": _summarize(vms),
         "vms": vms,
     }

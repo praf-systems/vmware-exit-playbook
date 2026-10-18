@@ -23,13 +23,17 @@ from .parser import (
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description="Stage 1: RVTools export to inventory.json")
     p.add_argument("--input", required=True, type=Path, help="RVTools vInfo export (.csv or .xlsx)")
+    p.add_argument("--snapshots", type=Path, default=None,
+                   help="RVTools vSnapshot export (CSV); read automatically from .xlsx")
+    p.add_argument("--cd", type=Path, default=None,
+                   help="RVTools vCD export (CSV); read automatically from .xlsx")
     p.add_argument("--output", default=Path("runs/inventory.json"), type=Path)
     p.add_argument("--columns", default=DEFAULT_COLUMNS, type=Path, help="column mapping YAML")
     p.add_argument("--schema", default=DEFAULT_SCHEMA, type=Path, help="inventory JSON Schema")
     args = p.parse_args(argv)
 
     try:
-        inventory = build_inventory(args.input, args.columns)
+        inventory = build_inventory(args.input, args.columns, snapshots=args.snapshots, cd=args.cd)
         validate_inventory(inventory, args.schema)
     except InventoryError as exc:
         print(f"ERROR: {exc}", file=sys.stderr)

@@ -1,0 +1,3 @@
+VM,Device Node,Connected,Starts Connected,Device Type,VM UUID
+pay-api01,CD/DVD drive 1,False,False,Client Device,4210a1b2-0001-4c3d-8e9f-000000000001
+web-portal02,CD/DVD drive 1,True,True,[shared-iso] linux/tools-upgrade.iso,4210a1b2-0005-4c3d-8e9f-000000000005

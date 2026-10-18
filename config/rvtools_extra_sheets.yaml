@@ -1,0 +1,15 @@
+# Extra RVTools sheets that stage 1 reads to flag VMs that would fail migration.
+# Each sheet is matched back to vInfo by VM UUID when both have one, otherwise by VM name.
+# For .xlsx exports the sheets are read automatically; for CSV exports pass them with
+# --snapshots and --cd.
+
+vSnapshot:
+  # Any row means the VM has at least one snapshot.
+  vm_name: ["VM", "VM Name"]
+  vm_id: ["VM UUID", "VM ID", "UUID"]
+
+vCD:
+  # A row with Connected = True means media (usually an ISO) is mounted.
+  vm_name: ["VM", "VM Name"]
+  vm_id: ["VM UUID", "VM ID", "UUID"]
+  connected: ["Connected", "Connected?"]

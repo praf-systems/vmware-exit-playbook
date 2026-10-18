@@ -22,7 +22,7 @@ flowchart LR
     A[1 Inventory<br/>inventory.json] --> B[2 Classify<br/>classified.json]
     B --> C[3 Target mapping<br/>targets.json]
     C --> D[4 Sizing<br/>sizing.json]
-    D --> E[5 Wave planning<br/>waves.json]
+    D --> E[5 Readiness and waves<br/>waves.json]
     E --> F[6 Security translation<br/>sg_rules.csv]
     F --> G[7 IaC generation<br/>Terraform plans]
     G --> H[8 Cutover and validation<br/>runbooks + report]
@@ -41,7 +41,9 @@ source .venv/bin/activate
 pip install -e ".[dev]"
 
 # Stage 1: turn an RVTools export into inventory.json
-exitplaybook-inventory --input samples/rvtools_vinfo_sample.csv --output runs/inventory.json
+exitplaybook-inventory --input samples/rvtools_vinfo_sample.csv \
+  --snapshots samples/rvtools_vsnapshot_sample.csv --cd samples/rvtools_vcd_sample.csv \
+  --output runs/inventory.json
 
 # Stage 2: assign a 7R strategy to every VM
 exitplaybook-classify --inventory runs/inventory.json --tags samples/app_tags.csv --output runs/classified.json
@@ -81,7 +83,7 @@ terraform/   landing zone and per-wave modules
 | --- | --- | --- |
 | v0.1 | Inventory and classify, schemas, synthetic data, CI | Released |
 | v0.2 | Decision scoring and sizing | Planned |
-| v0.3 | Wave planning and security translation | Planned |
+| v0.3 | Readiness checks, wave planning and security translation | Planned |
 | v0.4 | Terraform rendering and cutover runbooks | Planned |
 | v1.0 | Full end-to-end run and documentation pack | Planned |
 
@@ -97,10 +99,11 @@ So the code here is new, but the opinions aren't. Each rule in the pipeline is s
 
 This is a reference design, not a product, and it says so where it falls short:
 
-- Only stages 1 and 2 are built so far; the rest of the pipeline is designed but not written yet.
+- Only stages 1 and 2 are built so far; the rest of the pipeline is designed but not written yet. The readiness checks (DRS rules, firewall rules, backup status) are planned for v0.3; snapshots and mounted media are already flagged in stage 1.
 - The classification rules are deliberately conservative. Without application tags, most VMs come out as rehost.
 - Sizing, cost and dependency mapping are on the roadmap, not in the code.
 - The PowerCLI export script is a starting point; test it against your own vCenter before relying on it.
+- The pipeline assumes VLAN-backed networks on distributed switches. VMs on NSX overlay networks, and NSX Edge services such as load balancing, NAT and VPN, need extra planning that isn't covered yet.
 
 ## Disclaimer
 

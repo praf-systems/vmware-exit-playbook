@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "exitplaybook"
-version = "0.1.1"
+version = "0.1.2"
 description = "Stay, move or leave VMware: a schema-driven reference pipeline"
 readme = "README.md"
 license = { text = "MIT" }

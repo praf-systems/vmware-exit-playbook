@@ -6,6 +6,13 @@ Turns an RVTools vInfo export into a validated `inventory.json`, the input for e
 
 An RVTools export of the **vInfo** sheet, as `.csv` or `.xlsx`. For `.xlsx`, the `vInfo` sheet is used if present, otherwise the first sheet.
 
+Two more RVTools sheets are read when available, because they catch VMs that would fail to migrate:
+
+- **vSnapshot**: any VM listed here has at least one snapshot.
+- **vCD**: a VM whose CD drive shows `Connected = True` has media (usually an ISO) mounted.
+
+For an `.xlsx` export these sheets are read automatically. For CSV exports, pass them with `--snapshots` and `--cd`. Rows are matched back to vInfo by VM UUID when both sides have one, otherwise by VM name. The output records how many rows each sheet had and how many matched a VM, so rows for VMs that no longer exist are visible rather than silently lost. Column names for these sheets live in `config/rvtools_extra_sheets.yaml`.
+
 ## What it does
 
 1. **Maps columns.** RVTools column names differ between versions (`Powerstate` vs `Power State`, `Provisioned MiB` vs `Provisioned MB`). `config/rvtools_columns.yaml` lists the accepted names for each field; matching ignores case and extra spaces. A missing required column stops the run with a message naming every alias that was tried.
@@ -23,6 +30,8 @@ An RVTools export of the **vInfo** sheet, as `.csv` or `.xlsx`. For `.xlsx`, the
 | `zero_disk` | No provisioned storage | Likely stale record |
 | `zero_cpu` | No vCPUs reported | Likely bad data |
 | `generated_id` | ID was generated | No UUID in the source |
+| `snapshot` | Has at least one snapshot | Snapshots stop a VM from being staged; clean them up before batch preparation |
+| `connected_media` | CD/ISO mounted | Mounted media makes a migration fail; unmount it before the wave |
 
 6. **Validates** the result against `schemas/inventory.schema.json` and writes it.
 
@@ -33,7 +42,9 @@ An RVTools export of the **vInfo** sheet, as `.csv` or `.xlsx`. For `.xlsx`, the
 ## Run it
 
 ```bash
-exitplaybook-inventory --input samples/rvtools_vinfo_sample.csv --output runs/inventory.json
+exitplaybook-inventory --input samples/rvtools_vinfo_sample.csv \
+  --snapshots samples/rvtools_vsnapshot_sample.csv --cd samples/rvtools_vcd_sample.csv \
+  --output runs/inventory.json
 ```
 
 ## Extending it
