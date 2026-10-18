@@ -207,3 +207,75 @@ def test_powercli_export_is_accepted():
         ("poweredOn", 16.0, 200.0)
     tpl = by_name(inv, "tpl-win2022-golden")
     assert tpl["is_template"] and tpl["datacenter"] is None
+
+
+# ---------- snapshots and mounted media ----------
+
+SNAPS = ROOT / "samples" / "rvtools_vsnapshot_sample.csv"
+CDS = ROOT / "samples" / "rvtools_vcd_sample.csv"
+
+
+@pytest.fixture
+def with_sheets():
+    return build_inventory(SAMPLE, generated_at=FIXED_TIME, snapshots=SNAPS, cd=CDS)
+
+
+def test_snapshots_are_flagged(with_sheets):
+    assert "snapshot" in by_name(with_sheets, "pay-api01-stg")["flags"]
+    assert "snapshot" in by_name(with_sheets, "rpt-legacy01")["flags"]
+    assert "snapshot" not in by_name(with_sheets, "pay-api01")["flags"]
+
+
+def test_only_connected_media_is_flagged(with_sheets):
+    assert "connected_media" in by_name(with_sheets, "web-portal02")["flags"]
+    # pay-api01 has a CD drive, but nothing is connected to it.
+    assert "connected_media" not in by_name(with_sheets, "pay-api01")["flags"]
+
+
+def test_extra_sheet_rows_are_counted(with_sheets):
+    sheets = with_sheets["source"]["extra_sheets"]
+    assert sheets["vSnapshot"] == {"rows": 3, "matched": 2}
+    assert sheets["vCD"] == {"rows": 2, "matched": 2}
+    validate_inventory(with_sheets)
+
+
+def test_csv_without_extra_sheets_still_works(inventory):
+    assert inventory["source"]["extra_sheets"] == {}
+    assert not any({"snapshot", "connected_media"} & set(v["flags"]) for v in inventory["vms"])
+
+
+def test_extra_sheets_match_by_name_when_there_is_no_uuid(tmp_path):
+    snaps = tmp_path / "snaps.csv"
+    snaps.write_text("VM,Name\nimg-archive01,pre-patch\n", encoding="utf-8")
+    inv = build_inventory(LEGACY, generated_at=FIXED_TIME, snapshots=snaps)
+    assert "snapshot" in by_name(inv, "img-archive01")["flags"]
+    assert "snapshot" not in by_name(inv, "crm-db01")["flags"]
+
+
+def test_xlsx_reads_extra_sheets_automatically(tmp_path):
+    from openpyxl import Workbook
+    wb = Workbook()
+    info = wb.active
+    info.title = "vInfo"
+    info.append(["VM", "Powerstate", "CPUs", "Memory", "Provisioned MiB", "VM UUID"])
+    info.append(["xl-vm01", "poweredOn", 2, 4096, 20480, "xl-0001"])
+    info.append(["xl-vm02", "poweredOn", 2, 4096, 20480, "xl-0002"])
+    snap = wb.create_sheet("vSnapshot")
+    snap.append(["VM", "Name", "VM UUID"])
+    snap.append(["xl-vm01", "snap1", "xl-0001"])
+    cd = wb.create_sheet("vCD")
+    cd.append(["VM", "Connected", "VM UUID"])
+    cd.append(["xl-vm02", True, "xl-0002"])
+    path = tmp_path / "export.xlsx"
+    wb.save(path)
+    inv = build_inventory(path, generated_at=FIXED_TIME)
+    assert "snapshot" in by_name(inv, "xl-vm01")["flags"]
+    assert "connected_media" in by_name(inv, "xl-vm02")["flags"]
+    validate_inventory(inv)
+
+
+def test_cli_accepts_extra_sheets(tmp_path):
+    out = tmp_path / "inventory.json"
+    code = main(["--input", str(SAMPLE), "--snapshots", str(SNAPS), "--cd", str(CDS),
+                 "--output", str(out)])
+    assert code == 0 and "connected_media" in out.read_text()

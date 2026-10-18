@@ -4,6 +4,25 @@ All notable changes are recorded here. The format follows [Keep a Changelog](htt
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-10-17
+
+### Added
+
+- Stage 1 reads the RVTools `vSnapshot` and `vCD` sheets and flags VMs with snapshots (`snapshot`) or mounted media (`connected_media`), which make migrations fail. Automatic for `.xlsx`; `--snapshots` and `--cd` for CSV exports.
+- Field note 02: running HCX over a long program.
+- ADR 0003 (size service meshes from data volume), ADR 0004 (design the destination for growth) and ADR 0005 (agree a temporary RPO for the migration period).
+- Twelve new traps from the field.
+
+### Changed
+
+- Inventory schema 1.1: two new flags and a record of which extra sheets were read and how many rows matched.
+- Stage 5 is now "readiness and wave planning"; readiness checks are on the v0.3 roadmap.
+- Known limitations now state that the pipeline assumes VLAN-backed networks.
+
+### Removed
+
+- A stray scratch file, `.gitignore.additions`.
+
 ## [0.1.1] - 2026-10-17
 
 ### Added

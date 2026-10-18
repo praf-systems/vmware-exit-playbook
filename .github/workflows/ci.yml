@@ -49,7 +49,9 @@ jobs:
 
       - name: End-to-end run on sample data
         run: |
-          exitplaybook-inventory --input samples/rvtools_vinfo_sample.csv --output runs/inventory.json
+          exitplaybook-inventory --input samples/rvtools_vinfo_sample.csv \
+            --snapshots samples/rvtools_vsnapshot_sample.csv --cd samples/rvtools_vcd_sample.csv \
+            --output runs/inventory.json
           exitplaybook-classify --inventory runs/inventory.json --tags samples/app_tags.csv --output runs/classified.json
 
       - name: Keep the pipeline output
