@@ -4,6 +4,18 @@ All notable changes are recorded here. The format follows [Keep a Changelog](htt
 
 ## [Unreleased]
 
+## [0.1.5] - 2026-10-20
+
+### Changed
+
+- OpenShift Virtualization guide updated from lab session 1: masquerade networking explained from inside the guest (the guest always sees 10.0.2.2; the outside address is the pod's), a VMware reading of the VM details page, template deployment and a working web server, and corrected traps. Three new screenshots.
+
+## [0.1.4] - 2026-10-20
+
+### Added
+
+- First destination guide: OpenShift Virtualization, partly tested from lab session 1 in the Red Hat Developer Sandbox. Covers sizing with instance types, networking and IP addresses, live migration and snapshot requirements, operations, an indicative license cost comparison, and traps from the lab.
+
 ## [0.1.3] - 2026-10-18
 
 ### Added
