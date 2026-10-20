@@ -8,7 +8,7 @@ I'm starting where the least has been written from a migration architect's point
 
 | Destination | Path | Guide | How it's tested |
 | --- | --- | --- | --- |
-| OpenShift Virtualization | Leave | In progress | Lab sessions (Red Hat Developer Sandbox, then a self-built KubeVirt lab) |
+| [OpenShift Virtualization](openshift-virtualization.md) | Leave | Partly tested: 1 lab session | Red Hat Developer Sandbox, then a self-built KubeVirt lab |
 | Oracle Cloud Infrastructure | Move | Planned | OCI free tier |
 | KVM, Proxmox VE, OpenStack | Leave | Planned | Lab |
 | AWS, Azure, GCP | Move | Planned: shared-principles skeleton only | Documentation, plus earlier hands-on AWS work |
